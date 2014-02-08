@@ -293,13 +293,18 @@ describe('socket.io', function(){
       var sio = io(srv);
       srv.listen(function(){
         var socket = client(srv);
+        var imageData;
         socket.on('doge', function(a){
           expect(Buffer.isBuffer(a)).to.be(true);
+          expect(imageData.length).to.equal(a.length);
+          expect(imageData[0]).to.equal(a[0]);
+          expect(imageData[imageData.length - 1]).to.equal(a[a.length - 1]);
           done();
         });
         sio.on('connection', function(s){
           fs.readFile(join(__dirname, 'support', 'doge.jpg'), function(err, data){
             if (err) return done(err);
+            imageData = data;
             s.emit('doge', data);
           })
         });
