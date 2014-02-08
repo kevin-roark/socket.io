@@ -1,6 +1,7 @@
 
 var http = require('http').Server;
 var io = require('..');
+var fs = require('fs');
 var ioc = require('socket.io-client');
 var request = require('supertest');
 var expect = require('expect.js');
@@ -282,6 +283,23 @@ describe('socket.io', function(){
         });
         sio.on('connection', function(s){
           s.emit('woot', 'tobi');
+        });
+      });
+    });
+
+    it('should emit events with binary data', function(done){
+      var srv = http();
+      var sio = io(srv);
+      srv.listen(function(){
+        var socket = client(srv);
+        socket.on('doge', function(a){
+          expect(Buffer.isBuffer(a)).to.be(true);
+          done();
+        });
+        sio.on('connection', function(s){
+          fs.readFile('support/doge.jpg', function(err, data){
+            s.emit('doge', data);
+          })
         });
       });
     });
