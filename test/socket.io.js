@@ -320,7 +320,7 @@ describe('socket.io', function(){
           expect(a).to.be(1);
           expect(Buffer.isBuffer(b)).to.be(true);
           expect(c).to.be('3');
-          expect(d).to.be([4]);
+          expect(d).to.eql([4]);
           expect(Buffer.isBuffer(e)).to.be(true);
           expect(Buffer.isBuffer(f[0])).to.be(true);
           expect(f[1]).to.be('swag');
@@ -363,7 +363,7 @@ describe('socket.io', function(){
           expect(a).to.be(1);
           expect(Buffer.isBuffer(b)).to.be(true);
           expect(c).to.be('3');
-          expect(d).to.be([4]);
+          expect(d).to.eql([4]);
           expect(Buffer.isBuffer(e)).to.be(true);
           expect(Buffer.isBuffer(f[0])).to.be(true);
           expect(f[1]).to.be('swag');
