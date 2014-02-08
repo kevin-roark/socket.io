@@ -2,6 +2,7 @@
 var http = require('http').Server;
 var io = require('..');
 var fs = require('fs');
+var join = require('path').join;
 var ioc = require('socket.io-client');
 var request = require('supertest');
 var expect = require('expect.js');
@@ -297,7 +298,8 @@ describe('socket.io', function(){
           done();
         });
         sio.on('connection', function(s){
-          fs.readFile('support/doge.jpg', function(err, data){
+          fs.readFile(join(__dirname, 'support', 'doge.jpg'), function(err, data){
+            if (err) return done(err);
             s.emit('doge', data);
           })
         });
