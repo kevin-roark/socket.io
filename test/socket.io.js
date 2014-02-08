@@ -317,13 +317,12 @@ describe('socket.io', function(){
       srv.listen(function(){
         var socket = client(srv);
         sio.on('connection', function(s){
-          s.on('buffa', function(a){
+          s.on('buff', function(a){
             expect(Buffer.isBuffer(a)).to.be(true);
             done();
           });
-          buf = new Buffer(256);
-          buf.write('\u00bd + \u00bc = \u00be', 0);
-          socket.emit('buffa', buffer);
+          buf = new Buffer('abcdefg', 'utf8');
+          socket.emit('buff', buf);
         });
       });
     });
