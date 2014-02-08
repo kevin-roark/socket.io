@@ -348,6 +348,32 @@ describe('socket.io', function(){
       });
     });
 
+    it('should receive events with several types of data (including binary)', function(done){
+      var srv = http();
+      var sio = io(srv);
+      srv.listen(function(){
+        var socket = client(srv);
+        sio.on('connection', function(s){
+          s.on('multiple', function(a, b, c, d, e, f){
+          expect(a).to.be(1);
+          expect(Buffer.isBuffer(b)).to.be(true);
+          expect(c).to.be('3');
+          expect(d).to.be([4]);
+          expect(Buffer.isBuffer(e)).to.be(true);
+          expect(Buffer.isBuffer(f[0])).to.be(true);
+          expect(f[1]).to.be('swag');
+          expect(Buffer.isBuffer(f[2])).to.be(true);
+          done();
+          });
+          fs.readFile(join(__dirname, 'support', 'doge.jpg'), function(err, data){
+            if (err) return done(err);
+            buf = new Buffer('asdfasdf', 'utf8');
+            socket.emit('multiple', 1, data, '3', [4], buf, [data, 'swag', buf]);
+          });
+        });
+      });
+    });
+
     it('should emit message events through `send`', function(done){
       var srv = http();
       var sio = io(srv);
