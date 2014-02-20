@@ -249,6 +249,25 @@ server.listen(3000);
   originated the underlying engine.io `Client`. Useful for accessing
   request headers such as `Cookie` or `User-Agent`.
 
+### Socket#emit
+
+  Emits an event across the socket to the client.
+  Here's an example:
+
+  ```js
+  var io = require('socket.io')();
+  io.on('connection', function(socket) {
+    socket.emit('event_name', {
+      text: 'arbitrary_text', // you can send strings
+      other_data: [1, 2, 3],  // and any JSON
+      binary_data: new Buffer('1234', 'utf8') // and any binary data 
+    });
+  });
+  ```
+
+  The client will receive the event with the same arguments -- valid binary
+  types are Buffer, ArrayBuffer, Blob, and File.
+
 ### Client
 
   The `Client` class represents an incoming transport (engine.io)
