@@ -371,6 +371,23 @@ describe('socket.io', function(){
   });
 
   describe('socket', function(){
+    
+    it.only('should have access to client remote address', function(done) {
+      var srv = http();
+      var sio = io(srv);
+      srv.listen(function() {
+        sio.on('connection', function(s) {
+          var req = s.request;
+          var ip = req.headers['x-forwarded-for'] || 
+                   req.connection.remoteAddress || 
+                   req.socket.remoteAddress;
+          console.log(ip);
+          console.log(s.request.connection.remoteAddress);
+        });
+        var socket = client(srv);
+      });
+    });
+
     it('should receive events', function(done){
       var srv = http();
       var sio = io(srv);
