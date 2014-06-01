@@ -848,6 +848,58 @@ describe('socket.io', function(){
         });
       });
     });
+
+    it('should handle very deep json with binary', function(done){
+      this.timeout();
+      var srv = http();
+      var sio = io(srv);
+      var received = 0;
+      srv.listen(function(){
+        var socket = client(srv);
+        socket.on('big', function(a){
+          if (++received == 1)
+            done();
+          else
+            socket.emit('big', a);
+        });
+        sio.on('connection', function(s){
+          fs.readFile(join(__dirname, 'fixtures', 'deep.json'), function(err, data){
+            if (err) return done(err);
+            data = JSON.parse(data);
+            s.emit('big', {hello: new Buffer('friend'), json: data});
+          });
+          s.on('big', function(a){
+            s.emit('big', a);
+          });
+        });
+      });
+    });
+
+    it('handle very deep json with binary in an ack', function(done) {
+      this.timeout();
+      var srv = http();
+      var sio = io(srv);
+      srv.listen(function(){
+        var socket = client(srv);
+        sio.on('connection', function(s){
+          socket.on('hi', function(fn){
+            fs.readFile(join(__dirname, 'fixtures', 'deep.json'), function(err, data){
+              if (err) return done(err);
+              data = JSON.parse(data);
+              fs.readFile(join(__dirname, 'fixtures', 'big.jpg'), function(err, image){
+                if (err) return done(err);
+                fn({json: data, bin: image});
+              });
+            });
+          });
+          s.emit('hi', function(a){
+            expect(Buffer.isBuffer(a.bin)).to.be(true);
+            expect(Buffer.isBuffer(a.json)).to.be(false);
+            done();
+          });
+        });
+      });
+    });
   });
 
   describe('messaging many', function(){
